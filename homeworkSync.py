@@ -133,4 +133,7 @@ for hw in valid_homework:
 		#TODO: how to upload a date with a valid format
 		post_new_todo(taskJson)
 		#TODO: add id to uploaded_Id.txt
+		f = open("uploaded_id.txt", "a")
+		f.write(str(hw.id)+'\n')
+		f.close()
 		print(hw.name,' submited to Habitica')

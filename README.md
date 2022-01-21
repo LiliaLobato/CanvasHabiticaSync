@@ -10,3 +10,5 @@ https://pypi.org/project/canvasapi/
 https://canvasapi.readthedocs.io/en/stable/getting-started.html
 https://canvasapi.readthedocs.io/en/stable/examples.html#assignments
 
+Information used for Habitica Api:
+https://habitica.com/apidoc/#api-Task-CreateUserTasks
