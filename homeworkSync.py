@@ -1,5 +1,4 @@
 from canvasapi import Canvas
-from datetime import datetime
 import requests
 
 #important data in order to connect to my canvas profile
@@ -85,8 +84,11 @@ def get_current_todos(canvasId):
 
 	todos = {}
 	for todo in r.json()['data']:
-		if canvasId in todo['tags']:
-			todos[todo['notes']] = todo['text']
+		if canvasId in todo['tags']: 
+			date = todo['date']
+			if (date != None):
+				date = date[0:len(date)-5]+date[len(date)-1]
+			todos[todo['notes']] = [todo['text'], todo['id'], date]
 	return todos
 
 #### LETS START POSTING SOME TASK ####
@@ -95,6 +97,13 @@ def post_new_todo(taskJson):
 	  json=taskJson,
 	  headers=auth_headers)
 	assert r.status_code == 201, r.json()
+
+#### UPDATING SOME TASK ####
+def put_todo(taskJson, taskId):
+	r = requests.put( 'https://habitica.com/api/v3/tasks/' + str(taskId),
+	  json=taskJson,
+	  headers=auth_headers)
+	assert r.status_code == 200, r.json()
 
 ########## MAIN
 #### SYNCH THE DATA ####
@@ -115,8 +124,13 @@ for hw in valid_homework:
 	upload_hw = True
 	if str(hw.id) in uploaded_homework.keys():
 		#its still up in habitica 
-		print(hw.name,' is still active on Habitica')
-		#TODO: if is still in habitica, check if due date needs any update
+		#if is still in habitica, check if due date needs any update
+		if hw.due_at != uploaded_homework[str(hw.id)][2]:
+			print(hw.name,' needs a due_at update')
+			taskJson={ "text": hw.name, "type": "todo", "notes": hw.id, "priority": 2, "tags": [canvasId], "date":hw.due_at}
+			put_todo(taskJson, uploaded_homework[str(hw.id)][1])
+		else:
+			print(hw.name,' is still active on Habitica')
 		upload_hw = False
 	else:
 		#if its not in habitica, it maybe have been completed
@@ -129,10 +143,8 @@ for hw in valid_homework:
 		    		break
 	if upload_hw:
 		#if its not in the log, its a new task and needs to be uploaded
-		taskJson={ "text": hw.name, "type": "todo", "notes": hw.id, "priority": 2, "tags": [canvasId]}
-		#TODO: how to upload a date with a valid format
+		taskJson={ "text": hw.name, "type": "todo", "notes": hw.id, "priority": 2, "tags": [canvasId], "date":hw.due_at}
 		post_new_todo(taskJson)
-		#TODO: add id to uploaded_Id.txt
 		f = open("uploaded_id.txt", "a")
 		f.write(str(hw.id)+'\n')
 		f.close()
