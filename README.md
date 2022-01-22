@@ -12,3 +12,6 @@ https://canvasapi.readthedocs.io/en/stable/examples.html#assignments
 
 Information used for Habitica Api:
 https://habitica.com/apidoc/#api-Task-CreateUserTasks
+
+
+![alt text](https://github.com/LiliaLobato/CanvasHabiticaSync/blob/main/Result.JPG?raw=true)
